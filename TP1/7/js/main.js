@@ -1,0 +1,61 @@
+var canvas = document.getElementById('canvas');
+var ctx = canvas.getContext("2d");
+var width = canvas.width;
+var height = canvas.height;
+let imageData;
+document.querySelector("#file").addEventListener("change",cargarImagen);
+    
+	function cargarImagen(event){
+	let file = event.target.files[0];
+	let fr = new FileReader();
+	fr.onload = function(){ 
+            let img = new Image();
+            img.onload = function(){ 
+            canvas.width = img.width;
+            canvas.height = img.height;
+            ctx.drawImage(img,0,0);         
+            imageData = ctx.getImageData(0, 0, img.width, img.height);
+            }
+            img.src = fr.result;
+	    }; 
+	fr.readAsDataURL(file); 
+	}
+
+    function getRojo(imageData, x, y) {
+        let index = (x + y * imageData.width) * 4;
+        return imageData.data[index + 0];
+    }
+
+    function getVerde(imageData, x, y) {
+        let index = (x + y * imageData.width) * 4;
+        return imageData.data[index + 1];
+    }
+
+    function getAzul(imageData, x, y) {
+        let index = (x + y * imageData.width) * 4;
+        return imageData.data[index + 2];
+    }
+
+    function setPixel(imageData, x, y, r, g, b, a) {
+        index = (x + y * imageData.width) * 4;
+        imageData.data[index + 0] = r;
+        imageData.data[index + 1] = g;
+        imageData.data[index + 2] = b;
+        imageData.data[index + 3] = a;
+    }
+    var filtrobtn = document.getElementById('filtro');
+    filtrobtn.addEventListener('click', filtroimagen);
+
+    function filtroimagen() {
+		console.log(imageData);
+        for (let y = 0; y < imageData.width; y++) {
+            for (let x = 0; x < imageData.height; x++) {
+                let rojo = getRojo(imageData, y, x);
+                let verde = getVerde(imageData, y, x);
+                let azul = getAzul(imageData, y, x);
+                let gris = (rojo + verde + azul) / 3;
+                setPixel(imageData, y, x, gris, gris, gris, 255);
+            }
+        }
+        ctx.putImageData(imageData, 0, 0);
+    }
