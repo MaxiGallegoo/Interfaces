@@ -3,22 +3,25 @@ var ctx = canvas.getContext("2d");
 var width = canvas.width;
 var height = canvas.height;
 let imageData;
-document.querySelector("#file").addEventListener("change",cargarImagen);
+let filtrobtn = document.getElementById('filtro');    
+document.querySelector('.ifile').addEventListener("change",cargarImagen);
+filtrobtn.addEventListener('click', filtroimagen);    
     
-	function cargarImagen(event){
-	let file = event.target.files[0];
-	let fr = new FileReader();
-	fr.onload = function(){ 
-            let img = new Image();
-            img.onload = function(){ 
-            canvas.width = img.width;
-            canvas.height = img.height;
-            ctx.drawImage(img,0,0);         
-            imageData = ctx.getImageData(0, 0, img.width, img.height);
-            }
-            img.src = fr.result;
-	    }; 
-	fr.readAsDataURL(file); 
+    function cargarImagen(event){
+        filtrobtn.style.display = 'inline';
+        let file = event.target.files[0];
+        let fr = new FileReader();
+        fr.onload = function(){ 
+                let img = new Image();
+                img.onload = function(){ 
+                canvas.width = img.width;
+                canvas.height = img.height;
+                ctx.drawImage(img,0,0);         
+                imageData = ctx.getImageData(0, 0, img.width, img.height);
+                }
+                img.src = fr.result;
+            }; 
+        fr.readAsDataURL(file); 
 	}
 
     function getRojo(imageData, x, y) {
@@ -43,8 +46,6 @@ document.querySelector("#file").addEventListener("change",cargarImagen);
         imageData.data[index + 2] = b;
         imageData.data[index + 3] = a;
     }
-    var filtrobtn = document.getElementById('filtro');
-    filtrobtn.addEventListener('click', filtroimagen);
 
     function filtroimagen() {
 		console.log(imageData);
@@ -58,4 +59,5 @@ document.querySelector("#file").addEventListener("change",cargarImagen);
             }
         }
         ctx.putImageData(imageData, 0, 0);
+        filtrobtn.style.display = 'none';
     }
