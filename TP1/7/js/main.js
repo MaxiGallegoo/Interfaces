@@ -3,6 +3,9 @@ var ctx = canvas.getContext("2d");
 var width = canvas.width;
 var height = canvas.height;
 let imageData;
+let imageAspectRadio;
+let imageAspectWidth;
+let imageAspectHeight;
 let filtrobtn = document.getElementById('filtro');    
 document.querySelector('.ifile').addEventListener("change",cargarImagen);
 filtrobtn.addEventListener('click', filtroimagen);    
@@ -14,6 +17,15 @@ filtrobtn.addEventListener('click', filtroimagen);
         fr.onload = function(){ 
                 let img = new Image();
                 img.onload = function(){ 
+                    if(this.height > this.width){
+                        imageAspectRadio = (1.0 * this.height) / this.width;
+                        imageAspectWidth = canvas.width;
+                        imageAspectHeight = canvas.width * imageAspectRadio;
+                }  else{
+                    imageAspectRadio = (1.0 * this.width) / this.height;
+                    imageAspectWidth = canvas.height * imageAspectRadio;
+                    imageAspectHeight = canvas.height;
+                }
                 canvas.width = img.width;
                 canvas.height = img.height;
                 ctx.drawImage(img,0,0);         
