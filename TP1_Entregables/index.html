@@ -50,7 +50,7 @@
                         <a class="dropdown-item" id="binarizacion">Binarización</a>
                         <a class="dropdown-item" id="brillo" >Brillo                           
                             <label for="formControlRange"></label>
-                            <input type="range" class="custom-range" min="0" max="100" id="cantBrillo">
+                            <input type="range" class="custom-range" min="0" max="20" value="1" id="cantBrillo">
                         </a>
                         <a class="dropdown-item" id="negativo">Negativo</a>
                         <a class="dropdown-item" id="sepia">Sepia</a>
@@ -72,9 +72,11 @@
 
                 <div class="dropdown-menu"> 
                     <li class="nav-item dropdown"></li>
-                        <a class="dropdown-item" id="Detec_Bordes">Deteccion de Bordes</a>
-                        <a class="dropdown-item disabled" id="Blur">Blur</a>
-                        <a class="dropdown-item" id="Saturacion">Saturacion</a>
+                        <a class="dropdown-item" id="filtroSuavizado">Suavizado</a>
+                        <a class="dropdown-item" id="Saturacion">Saturacion
+                            <label for="formControlRange"></label>
+                            <input type="range" class="custom-range" min="0" max="1" value="0.5" step="0.05" id="cantSaturacion">
+                        </a>
                     </li>
                 </div>
 
