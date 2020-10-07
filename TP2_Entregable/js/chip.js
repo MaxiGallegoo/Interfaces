@@ -6,7 +6,6 @@ class Ficha {
     this.color = "#FFFFFF";
     this.size = 20;
     this.center = false;
-    this.forma = false;
     this.valor = 0;
   }
 
@@ -23,7 +22,6 @@ class Ficha {
   setX(x) {
     this.posX = x;
   }
-
   getY() {
     return this.posY;
   }
@@ -33,14 +31,8 @@ class Ficha {
   getCenter() {
     return this.center;
   }
-  getForma() {
-    return this.forma;
-  }
   getValor() {
     return this.valor;
-  }
-  setForma() {
-    this.forma = true;
   }
   setValor(v) {
     this.valor = v;
@@ -58,6 +50,7 @@ class Ficha {
     this.size = 7;
     this.center = true;
   }
+
   onTap(x, y) {
     let cX = this.posX;
     let cY = this.posY;

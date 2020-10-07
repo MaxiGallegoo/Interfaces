@@ -14,10 +14,13 @@ class Board {
 		this.arrayArrow = [];
 		this.playerOne;
 		this.playerTwo;
+		this.playerName1;
+		this.playerName2;
 		this.MaxSize = 8;
 		this.currentX=0;
 		this.currentY=0;
 		this.playerNow=true;
+		this.chipQuantity=0;
 	}
 	setPlayerOne(chip) {
 		this.playerOne = chip; 
@@ -25,21 +28,35 @@ class Board {
 	setPlayerTwo(chip) {
 		this.playerTwo = chip; 
 	}
-	//Set X position of player one
 	setPoneX(x){
 		this.playerOne.setX(x);
 	}
-	//Set Y position of player one
+
 	setPoneY(y) {
 		this.playerOne.setY(y);
 	}
-	//Set X position of player one
+
 	setPtwoX(x){
 		this.playerTwo.setX(x);
 	}
-	//Set Y position of player one
+
 	setPtwoY(y) {
 		this.playerTwo.setY(y);
+	}
+	getNamePone(name){
+		return this.playerName1;
+	}
+	getNamePtwo(name){
+		return this.playerName2;
+	}
+	setNamePone(name){
+		this.playerName1=name;
+	}
+	setNamePtwo(name){
+		this.playerName2=name;
+	}
+	getPlayerNow(){
+		return this.playerNow;
 	}
 	load(){
 		var tamanoFicha=62;
@@ -89,7 +106,7 @@ class Board {
 		ctx.fillRect(0,0,canvas.width,canvas.height);
 		ctx.closePath();
 		ctx.fillStyle ="#3904E4";
-		ctx.fillRect(150, 100, 500, 500); // x, y, ancho, lar
+		ctx.fillRect(150, 100, 500, 500); 
 		ctx.lineWidth = 4;
 		ctx.strokeStyle = "#000000";
 		ctx.beginPath();
@@ -104,18 +121,23 @@ class Board {
 		ctx.moveTo(650,100);
 		ctx.lineTo(650,600);
 		ctx.stroke();
+		ctx.font = "bold 12px sans-serif";
+		ctx.fillStyle="#000000";
+		ctx.fillText("Seleccionar fila a ingresar",2,75);
+		ctx.font = "bold 20px sans-serif";
+		ctx.fillText("--->",75,95);
 	}
 
 	detecClick(x,y){
+		if(this.playerNow){
 			if(this.playerOne.onTap(x,y)){
-				if(this.playerOne){
 					return this.playerOne;
 				}		
-			}else{
-				if(this.playerTwo.onTap(x,y)){
+		}else{
+			if(this.playerTwo.onTap(x,y)){
 					return this.playerTwo;
-				}
 			}
+		}
 		return null;
 	}
 
@@ -130,7 +152,7 @@ class Board {
 	}
 
 	isCoordValid(chip) {
-		if(true){
+		if(chip || null){
 			for(var i = 0;i<this.arrayArrow.length;i++){
 				if(chip.onTap(this.arrayArrow[i].getX(),this.arrayArrow[i].getY())){
 					return i;
@@ -150,6 +172,7 @@ class Board {
 				this.matrix[position][i].setColor(chipNow.getColor());
 				drawChips();
 				this.draw();
+				this.finish(position,i);
 				if(this.playerNow){
 					this.playerNow=false;
 				}else{
@@ -160,9 +183,178 @@ class Board {
 		}
 		return;
 	}
-
-	actualizarFila(x){
-		return true;
+	finish(columna,fila){
+		let jugador;
+		jugador = this.win(columna,fila);
+		if(jugador || null){
+				if(this.playerNow){
+					document.querySelector('#TextWinner').innerHTML = 'Felicitaciones Ganador = '+ board.getNamePone();
+				}else{
+					document.querySelector('#TextWinner').innerHTML = 'Felicitaciones Ganador = '+ board.getNamePtwo();
+				}
+				Winner.click();
+		}
+		return false;
 	}
-
+	win(x,y){
+		if(this.porDer(x,y) || null){
+			return this.porDer(x,y);
+		}else{
+			if(this.porIzq(x,y) || null){
+				return this.porIzq(x,y);
+			}
+			else{
+				if(this.porAbajo(x,y) || null){
+					return this.porAbajo(x,y);
+				}
+				else{
+					if(this.porDerInf(x,y) || null){
+							return this.porDerInf(x,y);
+					}else{
+						if(this.porDerSup(x,y) || null){
+							return this.porDerSup(x,y);
+						}else{
+							if(this.porIzqInf(x,y) || null){
+									return this.porIzqInf(x,y);
+							}else{
+								if(this.porIzqSup(x,y) || null){
+									return this.porIzqSup(x,y);
+								}
+							}
+						}
+					}	
+				}	
+			}	
+		}				
+		return null;
+	}
+	porDer(x,y){
+		let aux=0;
+		for(let i=x; i < this.matrix.length;i++){
+			if((i+1 < this.matrix.length)&&(this.matrix[i][y].getValor()>0)&&(this.matrix[i][y].getValor() == this.matrix[i+1][y].getValor())){							
+				aux++;
+			}
+			else{
+				aux=0;
+			}
+			if(aux == 3){
+				console.log("Ganaste Por Derecha");
+				return this.matrix[i][y].getValor();
+			}
+		}
+		return null;
+	}
+	porIzq(x,y){
+		let aux=0;
+		for(let i=x ; i >= 0 ; i--){
+			if((i > 0)&&(this.matrix[i][y].getValor()>0)&&(this.matrix[i][y].getValor() == this.matrix[i-1][y].getValor())){							
+				aux++;
+			}
+			else{
+				aux=0;
+			}
+			if(aux == 3){
+				console.log("Ganaste por izquierda");
+				return this.matrix[i][y].getValor();
+			}
+		}
+		return null;
+	}		
+	porAbajo(x,y){
+		let aux=0;
+		for(let i=y ; i<= this.matrix.length ;i++){
+			if((i+1<this.matrix.length)&&(this.matrix[x][i].getValor()>0)&&(this.matrix[x][i].getValor() == this.matrix[x][i+1].getValor())){							
+				aux++;
+			}
+			else{
+				aux=0;
+			}
+			if(aux == 3){
+				console.log("Ganaste por Abajo");
+				return this.matrix[x][i].getValor();
+			}
+		}
+		return null;
+	}
+	
+	porDerSup(x,y){
+		let aux=0,
+			i=x,
+			j=y;
+				while( (i+1 < this.matrix.length) && (j > 0) ) {
+					if((this.matrix [i][j].getValor()>0)&&(this.matrix[i][j].getValor() == this.matrix[i+1][j-1].getValor())){							
+						aux++;
+					}
+					else{
+						aux=0;
+					}
+					if(aux == 3){
+						console.log("Ganaste Por DerechaSuperior");
+						return this.matrix[i][j].getValor();
+					}
+					i++;
+					j--;				
+				}
+		return null;
+	}
+	porIzqInf(x,y){
+		let aux=0,
+			i=x,
+			j=y;
+				while( (j+1 < this.matrix.length) && (i > 0) ) {
+					if((this.matrix[i][j].getValor()>0)&&(this.matrix[i][j].getValor() == this.matrix[i-1][j+1].getValor())){							
+						aux++;
+					}
+					else{
+						aux=0;
+					}
+					if(aux == 3){
+						console.log("Ganaste Por IzquierdaInferior");
+						return this.matrix[i][j].getValor();
+					}
+					i--;
+					j++;				
+				}
+		return null;
+	}
+	porIzqSup(x,y){
+		let aux=0,
+			i=x,
+			j=y;
+				while( (i>0) && (j>0) ){
+					if((this.matrix[i][j].getValor()>0)&&(this.matrix[i][j].getValor() == this.matrix[i-1][j-1].getValor())){							
+						aux++;
+					}
+					else{
+						aux=0;
+					}
+					if(aux == 3){
+						console.log("Ganaste Por IzquierdaSuperior");
+						return this.matrix[i][j].getValor();
+					}
+					i--;
+					j--;				
+				}
+		return null;
+	}
+	porDerInf(x,y){
+		let aux=0,
+			i=x,
+			j=y;
+			while( (i+1 < this.matrix.length) && (j+1 < this.matrix.length) ){
+				if((this.matrix[i][j].getValor()>0)&&(this.matrix[i][j].getValor() == this.matrix[i+1][j+1].getValor())){							
+					aux++;
+				}
+				else{
+					aux=0;
+				}
+				if(aux == 3){
+					console.log("Ganaste Por DerechaSuperior");
+					return this.matrix[i][j].getValor();
+				}
+				i++;
+				j++;				
+			}
+	return null;
+	}
 }
